@@ -69,10 +69,10 @@ function CreateCoupon() {
 
                         <input className="forms m-2" type="text" name="discount" value={discount} placeholder="Valor do Desconto(%)" onChange={handleDiscount} /><br />
 
-                        <p>Data Inicial</p>
+                        <p>Date Start</p>
                         <input className="forms m-2" type="date" name="start" value={start} onChange={handleStart} />
 
-                        <p>Data de Expiração</p>
+                        <p>Expiration Date</p>
                         <input className="forms m-2" type="date" name="end" value={end} onChange={handleEnd} />
                         <div>
                             {errorMessage && <p className="error-message">{errorMessage}</p>}

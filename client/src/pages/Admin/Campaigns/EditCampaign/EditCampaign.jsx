@@ -73,9 +73,9 @@ function EditCampaign() {
                 <h1>Edit Campaign {campaign.name} </h1>
                 <div className="inputwrap">
                     <form onSubmit={ItemhandleSubmit}>
-                        <input className="forms mt-4 m-2" type="text" name="name" value={name} onChange={handleName} placeholder="Nome da Campanha" /><br />
+                        <input className="forms mt-4 m-2" type="text" name="name" value={name} onChange={handleName} placeholder="Campaign Name" /><br />
 
-                        <input className="forms m-2" type="text" name="description" value={description} onChange={handleDescription} placeholder="Descrição da Campanha" /><br />
+                        <input className="forms m-2" type="text" name="description" value={description} onChange={handleDescription} placeholder="Campaign Description" /><br />
 
                         <p>Initial Date</p>
                         <input className="forms m-2" type="date" name="start" value={start} onChange={handleStart} /><br />

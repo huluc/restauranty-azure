@@ -46,9 +46,9 @@ function CreateDietary() {
                 <h1>Create Category</h1>
                 <div className="inputwrap">
                     <form onSubmit={ItemhandleSubmit}>
-                        <input className="forms mt-4 m-2" type="text" name="name" value={name} placeholder="Nome da Categoria" onChange={handleName} /><br />
+                        <input className="forms mt-4 m-2" type="text" name="name" value={name} placeholder="Category Name" onChange={handleName} /><br />
 
-                        <textarea className="forms m-2" name="description" placeholder="Descricação da Categoria" value={description} onChange={handleDescription} /><br />
+                        <textarea className="forms m-2" name="description" placeholder="Category Description" value={description} onChange={handleDescription} /><br />
                         {errorMessage && <p className="error-message">{errorMessage}</p>}
                         <button className="button m-2" type="submit">Create Category</button>
                     </form>

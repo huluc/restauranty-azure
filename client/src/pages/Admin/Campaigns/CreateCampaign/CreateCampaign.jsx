@@ -61,9 +61,9 @@ function CreateCampaign() {
                 <div className="inputwrap">
                     <form onSubmit={handleSubmit}>
 
-                        <input className="forms mt-4 m-2" type="text" name="name" value={name} placeholder="Nome da Campanha" onChange={handleName} /><br />
+                        <input className="forms mt-4 m-2" type="text" name="name" value={name} placeholder="Campaign Name" onChange={handleName} /><br />
 
-                        <input className="forms m-2" type="text" name="description" placeholder="Descrição da Campanha" value={description} onChange={handleDescription} /><br />
+                        <input className="forms m-2" type="text" name="description" placeholder="Campaign Description" value={description} onChange={handleDescription} /><br />
 
                         <p>Initial Date</p>
                         <input className="forms m-2" type="date" name="start" value={start} onChange={handleStart} /><br />
