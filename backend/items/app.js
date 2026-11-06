@@ -35,7 +35,7 @@ const DietaryRoutes = require("./routes/dietary.routes");
 app.use("/api/items/dietary", DietaryRoutes);
 
 const OrdersRoutes = require("./routes/orders.routes");
-app.use("api/items/orders", OrdersRoutes);
+app.use("/api/items/orders", OrdersRoutes);
 
 // Expose /metrics endpoint for Prometheus to scrape metrics
 app.get('/metrics', async (req, res) => {

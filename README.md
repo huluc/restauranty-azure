@@ -38,6 +38,8 @@ A restaurant management platform built with a **microservices architecture**: 3 
 
 ## Quick Start
 
+Requires **Node.js 20 or newer** (tested on Node 24) and Docker.
+
 ### 1. Start MongoDB
 
 ```bash
@@ -45,7 +47,7 @@ docker run -d \
   --name my-mongo \
   -p 27017:27017 \
   -v mongo-data:/data/db \
-  mongo:latest
+  mongo:8
 ```
 
 ### 2. Start each microservice
