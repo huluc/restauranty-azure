@@ -1,0 +1,65 @@
+name: restauranty
+
+services:
+  mongo:
+    image: mongo:8
+    volumes:
+      - mongo-data:/data/db
+    healthcheck:
+      test: ["CMD", "mongosh", "--quiet", "--eval", "db.adminCommand('ping')"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  auth:
+    build: ./backend/auth
+    image: restauranty-auth:local
+    env_file: ./backend/auth/.env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/resturanty
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  discounts:
+    build: ./backend/discounts
+    image: restauranty-discounts:local
+    env_file: ./backend/discounts/.env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/resturanty
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  items:
+    build: ./backend/items
+    image: restauranty-items:local
+    env_file: ./backend/items/.env
+    environment:
+      MONGODB_URI: mongodb://mongo:27017/resturanty
+    depends_on:
+      mongo:
+        condition: service_healthy
+
+  client:
+    build: ./client
+    image: restauranty-client:local
+
+  haproxy:
+    image: haproxy:3.2-alpine
+    volumes:
+      - ./haproxy/haproxy.compose.cfg:/usr/local/etc/haproxy/haproxy.cfg:ro
+    ports:
+      - "8000:80"
+    depends_on:
+      auth:
+        condition: service_healthy
+      discounts:
+        condition: service_healthy
+      items:
+        condition: service_healthy
+      client:
+        condition: service_healthy
+
+volumes:
+  mongo-data:
