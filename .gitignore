@@ -8,3 +8,9 @@ backend/*/.env
 backend/*/node_modules
 mobile/.expo
 build
+
+# Terraform
+infra/.terraform/
+*.tfstate
+*.tfstate.*
+crash.log
