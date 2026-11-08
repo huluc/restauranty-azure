@@ -1,0 +1,16 @@
+image:
+  repository: mongo
+  tag: "8"
+
+storage:
+  size: 8Gi
+
+auth:
+  existingSecret: mongodb-auth
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    memory: 512Mi

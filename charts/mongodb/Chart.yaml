@@ -1,0 +1,5 @@
+apiVersion: v2
+name: mongodb
+description: Single-replica MongoDB for Restauranty (StatefulSet)
+type: application
+version: 0.1.0
