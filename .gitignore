@@ -14,3 +14,4 @@ infra/.terraform/
 *.tfstate
 *.tfstate.*
 crash.log
+infra/terraform.tfvars

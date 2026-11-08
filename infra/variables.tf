@@ -9,3 +9,14 @@ variable "prefix" {
   type        = string
   default     = "hilal-restauranty"
 }
+
+variable "budget_amount" {
+  description = "Monthly budget (billing currency) for all resources tagged owner=hilal"
+  type        = number
+  default     = 150
+}
+
+variable "budget_alert_email" {
+  description = "Where budget alerts are sent (set in terraform.tfvars, not committed)"
+  type        = string
+}
