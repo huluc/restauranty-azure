@@ -1,0 +1,44 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: restauranty
+  namespace: restauranty
+spec:
+  gatewayClassName: nginx
+  listeners:
+    - name: http
+      protocol: HTTP
+      port: 80
+      allowedRoutes:
+        namespaces:
+          from: Same
+---
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: restauranty
+  namespace: restauranty
+spec:
+  parentRefs:
+    - name: restauranty
+  rules:
+    - matches:
+        - path: { type: PathPrefix, value: /api/auth }
+      backendRefs:
+        - name: auth
+          port: 3001
+    - matches:
+        - path: { type: PathPrefix, value: /api/discounts }
+      backendRefs:
+        - name: discounts
+          port: 3002
+    - matches:
+        - path: { type: PathPrefix, value: /api/items }
+      backendRefs:
+        - name: items
+          port: 3003
+    - matches:
+        - path: { type: PathPrefix, value: / }
+      backendRefs:
+        - name: client
+          port: 8080
