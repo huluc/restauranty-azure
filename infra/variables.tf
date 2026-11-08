@@ -20,3 +20,9 @@ variable "budget_alert_email" {
   description = "Where budget alerts are sent (set in terraform.tfvars, not committed)"
   type        = string
 }
+
+variable "aks_enabled" {
+  description = "Set to false in the evening to delete both clusters and save cost"
+  type        = bool
+  default     = true
+}
