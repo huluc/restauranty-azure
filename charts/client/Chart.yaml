@@ -1,0 +1,9 @@
+apiVersion: v2
+name: client
+description: Restauranty React frontend served by nginx
+type: application
+version: 0.1.0
+dependencies:
+  - name: restauranty-lib
+    version: 0.1.0
+    repository: file://../restauranty-lib

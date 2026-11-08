@@ -1,0 +1,28 @@
+replicaCount: 2
+
+image:
+  repository: acrhilalrestauranty.azurecr.io/restauranty-auth
+  tag: "local"
+
+port: 3001
+probePath: /metrics
+runAsUser: 1000
+
+env: []
+
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    memory: 256Mi
+
+autoscaling:
+  enabled: false
+  minReplicas: 2
+  maxReplicas: 4
+  targetCPUUtilizationPercentage: 70
+
+podDisruptionBudget:
+  enabled: false
+  minAvailable: 1

@@ -1,0 +1,6 @@
+dependencies:
+- name: restauranty-lib
+  repository: file://../restauranty-lib
+  version: 0.1.0
+digest: sha256:af15b6fa3e5f089ae0a5ea49db1959e75809ad8f9661c43103b71e55d05140c4
+generated: "2026-11-08T19:37:44.699458768+01:00"

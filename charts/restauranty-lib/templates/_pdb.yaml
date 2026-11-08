@@ -1,0 +1,15 @@
+{{- define "restauranty-lib.pdb" -}}
+{{- if .Values.podDisruptionBudget.enabled }}
+apiVersion: policy/v1
+kind: PodDisruptionBudget
+metadata:
+  name: {{ include "restauranty-lib.name" . }}
+  labels:
+    {{- include "restauranty-lib.labels" . | nindent 4 }}
+spec:
+  minAvailable: {{ .Values.podDisruptionBudget.minAvailable }}
+  selector:
+    matchLabels:
+      {{- include "restauranty-lib.selectorLabels" . | nindent 6 }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,1 @@
+{{ include "restauranty-lib.service" . }}

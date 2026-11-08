@@ -15,3 +15,4 @@ infra/.terraform/
 *.tfstate.*
 crash.log
 infra/terraform.tfvars
+charts/*/charts/
