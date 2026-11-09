@@ -36,3 +36,8 @@ variable "user_max_count" {
   type    = number
   default = 4
 }
+
+variable "eso_identity_id" {
+  description = "ID of the managed identity External Secrets Operator uses in this cluster"
+  type        = string
+}

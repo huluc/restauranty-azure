@@ -49,6 +49,7 @@ module "aks_prod" {
   tags                        = merge(local.tags, { environment = "production" })
   log_analytics_workspace_id  = module.log_analytics.id
   acr_id                      = module.acr.id
+  eso_identity_id             = azurerm_user_assigned_identity.eso.id
   system_vm_size              = "Standard_D2as_v7"
   system_only_critical_addons = true
   zones                       = ["1", "2", "3"]
@@ -65,5 +66,20 @@ module "aks_staging" {
   tags                       = merge(local.tags, { environment = "staging" })
   log_analytics_workspace_id = module.log_analytics.id
   acr_id                     = module.acr.id
+  eso_identity_id            = azurerm_user_assigned_identity.eso.id
   system_vm_size             = "Standard_D2s_v7"
+}
+
+# Identity used by External Secrets Operator in both clusters (workload identity)
+resource "azurerm_user_assigned_identity" "eso" {
+  name                = "id-${var.prefix}-eso"
+  location            = var.location
+  resource_group_name = azurerm_resource_group.main.name
+  tags                = local.tags
+}
+
+resource "azurerm_role_assignment" "eso_kv_read" {
+  scope                = module.key_vault.id
+  role_definition_name = "Key Vault Secrets User"
+  principal_id         = azurerm_user_assigned_identity.eso.principal_id
 }

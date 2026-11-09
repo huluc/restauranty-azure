@@ -17,7 +17,11 @@ resource "azurerm_kubernetes_cluster" "this" {
     os_disk_size_gb              = 64
     only_critical_addons_enabled = var.system_only_critical_addons
     temporary_name_for_rotation  = "systemtmp"
-    tags                         = var.tags
+
+    upgrade_settings {
+      max_surge = "10%"
+    }
+    tags = var.tags
   }
 
   identity {
@@ -49,11 +53,23 @@ resource "azurerm_kubernetes_cluster_node_pool" "user" {
   auto_scaling_enabled  = true
   min_count             = var.user_min_count
   max_count             = var.user_max_count
-  tags                  = var.tags
+
+  upgrade_settings {
+    max_surge = "10%"
+  }
+  tags = var.tags
 }
 
 resource "azurerm_role_assignment" "acr_pull" {
   scope                = var.acr_id
   role_definition_name = "AcrPull"
   principal_id         = azurerm_kubernetes_cluster.this.kubelet_identity[0].object_id
+}
+
+resource "azurerm_federated_identity_credential" "eso" {
+  name      = "fic-${var.name}-eso"
+  parent_id = var.eso_identity_id
+  audience  = ["api://AzureADTokenExchange"]
+  issuer    = azurerm_kubernetes_cluster.this.oidc_issuer_url
+  subject   = "system:serviceaccount:external-secrets:external-secrets"
 }
