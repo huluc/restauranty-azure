@@ -81,3 +81,42 @@ stages:
                   displayName: Write new tag to values-staging.yaml
                   env:
                     GH_TOKEN: $(github-gitops-token)
+
+  - stage: DeployProduction
+    displayName: Deploy to production (GitOps, approval required)
+    dependsOn: DeployStaging
+    jobs:
+      - deployment: UpdateProductionTag
+        displayName: Update production image tag
+        pool:
+          vmImage: ubuntu-latest
+        environment: production
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureKeyVault@2
+                  displayName: Get GitHub token from Key Vault
+                  inputs:
+                    azureSubscription: azure-restauranty
+                    KeyVaultName: kv-hilal-restauranty
+                    SecretsFilter: github-gitops-token
+                    RunAsPreJob: false
+                - script: |
+                    set -euo pipefail
+                    TAG=$(echo "$(Build.SourceVersion)" | cut -c1-7)
+                    git config user.name "Azure Pipelines"
+                    git config user.email "azure-pipelines@noreply.dev.azure.com"
+                    git fetch origin main
+                    git checkout -B main origin/main
+                    for c in auth discounts items client; do
+                      sed -i "s|^  tag: .*|  tag: \"$TAG\"|" charts/$c/values-production.yaml
+                    done
+                    git add charts/*/values-production.yaml
+                    if git diff --cached --quiet; then echo "Tags already at $TAG"; exit 0; fi
+                    git commit -m "ci: deploy $TAG to production [skip ci]"
+                    git push "https://x-access-token:${GH_TOKEN}@github.com/huluc/restauranty-azure.git" main
+                  displayName: Write new tag to values-production.yaml
+                  env:
+                    GH_TOKEN: $(github-gitops-token)
