@@ -2,7 +2,7 @@ trigger:
   branches:
     include: [main]
   paths:
-    include: [backend, client]
+    include: [backend, client, azure-pipelines.yml]
 
 pr: none
 
@@ -42,3 +42,42 @@ stages:
                   --severity CRITICAL --ignore-unfixed --exit-code 1 --no-progress "$IMAGE"
                 az acr login --name $(acrName)
                 docker push "$IMAGE"
+
+  - stage: DeployStaging
+    displayName: Deploy to staging (GitOps)
+    dependsOn: Build
+    jobs:
+      - deployment: UpdateStagingTag
+        displayName: Update staging image tag
+        pool:
+          vmImage: ubuntu-latest
+        environment: staging
+        strategy:
+          runOnce:
+            deploy:
+              steps:
+                - checkout: self
+                - task: AzureKeyVault@2
+                  displayName: Get GitHub token from Key Vault
+                  inputs:
+                    azureSubscription: azure-restauranty
+                    KeyVaultName: kv-hilal-restauranty
+                    SecretsFilter: github-gitops-token
+                    RunAsPreJob: false
+                - script: |
+                    set -euo pipefail
+                    TAG=$(echo "$(Build.SourceVersion)" | cut -c1-7)
+                    git config user.name "Azure Pipelines"
+                    git config user.email "azure-pipelines@noreply.dev.azure.com"
+                    git fetch origin main
+                    git checkout -B main origin/main
+                    for c in auth discounts items client; do
+                      sed -i "s|^  tag: .*|  tag: \"$TAG\"|" charts/$c/values-staging.yaml
+                    done
+                    git add charts/*/values-staging.yaml
+                    if git diff --cached --quiet; then echo "Tags already at $TAG"; exit 0; fi
+                    git commit -m "ci: deploy $TAG to staging [skip ci]"
+                    git push "https://x-access-token:${GH_TOKEN}@github.com/huluc/restauranty-azure.git" main
+                  displayName: Write new tag to values-staging.yaml
+                  env:
+                    GH_TOKEN: $(github-gitops-token)
