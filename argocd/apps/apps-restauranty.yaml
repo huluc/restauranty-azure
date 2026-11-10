@@ -1,0 +1,40 @@
+apiVersion: argoproj.io/v1alpha1
+kind: ApplicationSet
+metadata:
+  name: restauranty-apps
+  namespace: argocd
+spec:
+  goTemplate: true
+  goTemplateOptions: ["missingkey=error"]
+  generators:
+    - matrix:
+        generators:
+          - clusters: {}
+          - list:
+              elements:
+                - chart: mongodb
+                - chart: auth
+                - chart: discounts
+                - chart: items
+                - chart: client
+  template:
+    metadata:
+      name: '{{.chart}}-{{.name}}'
+    spec:
+      project: default
+      source:
+        repoURL: https://github.com/huluc/restauranty-azure.git
+        targetRevision: main
+        path: 'charts/{{.chart}}'
+        helm:
+          releaseName: '{{.chart}}'
+          valueFiles:
+            - 'values-{{.name}}.yaml'
+          ignoreMissingValueFiles: true
+      destination:
+        server: '{{.server}}'
+        namespace: restauranty
+      syncPolicy:
+        automated:
+          prune: true
+          selfHeal: true
