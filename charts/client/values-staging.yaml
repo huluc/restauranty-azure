@@ -1,4 +1,4 @@
 replicaCount: 1
 
 image:
-  tag: "local"
+  tag: "8af24d1"
