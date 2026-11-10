@@ -39,6 +39,11 @@ spec:
           env:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          {{- with .Values.envFromSecret }}
+          envFrom:
+            - secretRef:
+                name: {{ . }}
+          {{- end }}
           readinessProbe:
             httpGet:
               path: {{ .Values.probePath }}

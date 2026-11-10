@@ -10,6 +10,8 @@ runAsUser: 1000
 
 env: []
 
+envFromSecret: restauranty-backend
+
 resources:
   requests:
     cpu: 100m
