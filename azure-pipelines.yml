@@ -1,0 +1,44 @@
+trigger:
+  branches:
+    include: [main]
+  paths:
+    include: [backend, client]
+
+pr: none
+
+variables:
+  acrName: acrhilalrestauranty
+  acrServer: acrhilalrestauranty.azurecr.io
+  trivyVersion: '0.76.2'
+
+stages:
+  - stage: Build
+    jobs:
+      - job: BuildScanPush
+        displayName: Build, scan, push
+        pool:
+          vmImage: ubuntu-latest
+        strategy:
+          matrix:
+            auth:      { service: auth,      context: backend/auth }
+            discounts: { service: discounts, context: backend/discounts }
+            items:     { service: items,     context: backend/items }
+            client:    { service: client,    context: client }
+        steps:
+          - checkout: self
+          - task: AzureCLI@2
+            displayName: Build, scan and push $(service)
+            inputs:
+              azureSubscription: azure-restauranty
+              scriptType: bash
+              scriptLocation: inlineScript
+              inlineScript: |
+                set -euo pipefail
+                TAG=$(echo "$(Build.SourceVersion)" | cut -c1-7)
+                IMAGE=$(acrServer)/restauranty-$(service):$TAG
+                docker build -t "$IMAGE" "$(context)"
+                docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
+                  aquasec/trivy:$(trivyVersion) image \
+                  --severity CRITICAL --ignore-unfixed --exit-code 1 --no-progress "$IMAGE"
+                az acr login --name $(acrName)
+                docker push "$IMAGE"
