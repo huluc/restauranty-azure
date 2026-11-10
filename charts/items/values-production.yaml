@@ -9,4 +9,4 @@ podDisruptionBudget:
   minAvailable: 1
 
 image:
-  tag: "local"
+  tag: "b83c2f5"
