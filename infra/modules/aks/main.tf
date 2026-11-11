@@ -73,3 +73,45 @@ resource "azurerm_federated_identity_credential" "eso" {
   issuer    = azurerm_kubernetes_cluster.this.oidc_issuer_url
   subject   = "system:serviceaccount:external-secrets:external-secrets"
 }
+
+# Container Insights needs a data collection rule when the agent uses managed identity.
+# The portal creates it automatically; Terraform does not.
+resource "azurerm_monitor_data_collection_rule" "container_insights" {
+  name                = "dcr-${var.name}-ci"
+  resource_group_name = var.resource_group_name
+  location            = var.location
+  tags                = var.tags
+
+  destinations {
+    log_analytics {
+      workspace_resource_id = var.log_analytics_workspace_id
+      name                  = "ciworkspace"
+    }
+  }
+
+  data_flow {
+    streams      = ["Microsoft-ContainerInsights-Group-Default"]
+    destinations = ["ciworkspace"]
+  }
+
+  data_sources {
+    extension {
+      name           = "ContainerInsightsExtension"
+      extension_name = "ContainerInsights"
+      streams        = ["Microsoft-ContainerInsights-Group-Default"]
+      extension_json = jsonencode({
+        dataCollectionSettings = {
+          interval               = "1m"
+          namespaceFilteringMode = "Off"
+          enableContainerLogV2   = true
+        }
+      })
+    }
+  }
+}
+
+resource "azurerm_monitor_data_collection_rule_association" "container_insights" {
+  name                    = "ContainerInsightsExtension"
+  target_resource_id      = azurerm_kubernetes_cluster.this.id
+  data_collection_rule_id = azurerm_monitor_data_collection_rule.container_insights.id
+}
