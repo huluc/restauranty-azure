@@ -1,0 +1,21 @@
+apiVersion: external-secrets.io/v1
+kind: ExternalSecret
+metadata:
+  name: grafana-admin
+  namespace: monitoring
+spec:
+  refreshInterval: 1h
+  secretStoreRef:
+    kind: ClusterSecretStore
+    name: azure-key-vault
+  target:
+    name: grafana-admin
+    template:
+      engineVersion: v2
+      data:
+        admin-user: admin
+        admin-password: "{{ .password }}"
+  data:
+    - secretKey: password
+      remoteRef:
+        key: grafana-admin-password
