@@ -1,0 +1,42 @@
+# Tell Prometheus to scrape /metrics of the three backend services
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: restauranty-backends
+  namespace: restauranty
+spec:
+  selector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: [auth, discounts, items]
+  namespaceSelector:
+    matchNames: [restauranty]
+  endpoints:
+    - port: http
+      path: /metrics
+      interval: 30s
+---
+# Open a door in the default-deny wall: Prometheus may reach the backends
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: allow-prometheus-to-backends
+  namespace: restauranty
+spec:
+  podSelector:
+    matchExpressions:
+      - key: app.kubernetes.io/name
+        operator: In
+        values: [auth, discounts, items]
+  policyTypes: [Ingress]
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              kubernetes.io/metadata.name: monitoring
+          podSelector:
+            matchLabels:
+              app.kubernetes.io/name: prometheus
+      ports:
+        - port: http
