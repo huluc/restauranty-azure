@@ -29,5 +29,14 @@ argocd cluster set in-cluster --name production
 echo "== 5/5 Root application"
 kubectl --context prod apply -f argocd/root-app.yaml
 
+echo "== 6/6 Wait for MongoDB, then restart the backends"
+# The services do not retry their first MongoDB connection. If they start before
+# MongoDB is ready they stay disconnected, so restart them once MongoDB is Ready.
+for ctx in prod staging; do
+  until kubectl --context "$ctx" get pod mongodb-0 -n restauranty > /dev/null 2>&1; do sleep 10; done
+  kubectl --context "$ctx" wait --for=condition=Ready pod/mongodb-0 -n restauranty --timeout=15m
+  kubectl --context "$ctx" delete pod -n restauranty -l 'app.kubernetes.io/name in (auth,discounts,items)'
+done
+
 echo "Done. Argo CD: https://localhost:8080 (user admin, port-forward PID $PF)"
 echo "Password: kubectl --context prod -n argocd get secret argocd-initial-admin-secret -o jsonpath='{.data.password}' | base64 -d"
