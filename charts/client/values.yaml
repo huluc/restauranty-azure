@@ -1,28 +1,44 @@
+# -- Number of pods when autoscaling is disabled
 replicaCount: 2
 
 image:
+  # -- Container image repository in ACR
   repository: acrhilalrestauranty.azurecr.io/restauranty-client
+  # -- Image tag (git commit SHA). The pipeline sets it per environment in values-<env>.yaml
   tag: "local"
 
+# -- Container port, exposed by the Service as the named port http
 port: 8080
+# -- HTTP path for the readiness and liveness probes
 probePath: /
+# -- Numeric user ID the container runs as (non-root)
 runAsUser: 101
 
+# -- Extra plain environment variables (name/value list). Never put secrets here
 env: []
 
 resources:
   requests:
+    # -- CPU request; the HPA percentage is based on it
     cpu: 50m
+    # -- Memory request
     memory: 64Mi
   limits:
+    # -- Memory limit (no CPU limit on purpose)
     memory: 128Mi
 
 autoscaling:
+  # -- Create a HorizontalPodAutoscaler; replicaCount is then ignored
   enabled: false
+  # -- Lowest number of pods
   minReplicas: 2
+  # -- Highest number of pods
   maxReplicas: 4
+  # -- Average CPU usage (percent of the request) the HPA aims for
   targetCPUUtilizationPercentage: 70
 
 podDisruptionBudget:
+  # -- Create a PodDisruptionBudget
   enabled: false
+  # -- Pods that must stay available during planned disruptions (node drain, upgrades)
   minAvailable: 1
