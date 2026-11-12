@@ -1,0 +1,79 @@
+apiVersion: v1
+entries:
+  auth:
+  - apiVersion: v2
+    created: "2026-11-12T14:32:27.229984523+01:00"
+    dependencies:
+    - name: restauranty-lib
+      repository: file://../restauranty-lib
+      version: 0.1.0
+    description: Restauranty auth service (register, login, JWT)
+    digest: 1b07e3748731c5525e99d7c466e89ef1edcc23dd41d584f92a0464640ff88165
+    name: auth
+    type: application
+    urls:
+    - https://huluc.github.io/restauranty-azure/auth-0.1.0.tgz
+    version: 0.1.0
+  client:
+  - apiVersion: v2
+    created: "2026-11-12T14:32:27.230711423+01:00"
+    dependencies:
+    - name: restauranty-lib
+      repository: file://../restauranty-lib
+      version: 0.1.0
+    description: Restauranty React frontend served by nginx
+    digest: e38fbbae0bd0d932d31b9ea79e2a0e83a0b93471c9a235593df118aea3bc719e
+    name: client
+    type: application
+    urls:
+    - https://huluc.github.io/restauranty-azure/client-0.1.0.tgz
+    version: 0.1.0
+  discounts:
+  - apiVersion: v2
+    created: "2026-11-12T14:32:27.231256224+01:00"
+    dependencies:
+    - name: restauranty-lib
+      repository: file://../restauranty-lib
+      version: 0.1.0
+    description: Restauranty discounts service
+    digest: 71ef4ff4350f2c1b7f69b1b6e0afbfcff2ead50fd48bec32e219bbda6df341d7
+    name: discounts
+    type: application
+    urls:
+    - https://huluc.github.io/restauranty-azure/discounts-0.1.0.tgz
+    version: 0.1.0
+  items:
+  - apiVersion: v2
+    created: "2026-11-12T14:32:27.231996024+01:00"
+    dependencies:
+    - name: restauranty-lib
+      repository: file://../restauranty-lib
+      version: 0.1.0
+    description: Restauranty items service
+    digest: 037a96b26c7925e700bc197fbb337b558734d310170c106e31164fefe603c11a
+    name: items
+    type: application
+    urls:
+    - https://huluc.github.io/restauranty-azure/items-0.1.0.tgz
+    version: 0.1.0
+  mongodb:
+  - apiVersion: v2
+    created: "2026-11-12T14:32:27.232245824+01:00"
+    description: Single-replica MongoDB for Restauranty (StatefulSet)
+    digest: bd31db55e2602335035df7f8313cd2e0288de351f0ec8c669fa187f7ab2cc5ea
+    name: mongodb
+    type: application
+    urls:
+    - https://huluc.github.io/restauranty-azure/mongodb-0.1.0.tgz
+    version: 0.1.0
+  restauranty-lib:
+  - apiVersion: v2
+    created: "2026-11-12T14:32:27.232438824+01:00"
+    description: Shared templates for all Restauranty service charts
+    digest: e5a68fdc18f9d53b36e3b23f7c278ce4602d41ed5f8f1d80b36d6d942becfd75
+    name: restauranty-lib
+    type: library
+    urls:
+    - https://huluc.github.io/restauranty-azure/restauranty-lib-0.1.0.tgz
+    version: 0.1.0
+generated: "2026-11-12T14:32:27.229169323+01:00"
