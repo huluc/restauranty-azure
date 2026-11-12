@@ -1,0 +1,6 @@
+# Known findings in upstream history (commit 6b07897, original author, April 2025).
+# The values are no longer in the code (now read from environment variables).
+# They belong to a third-party Cloudinary account and cannot be rotated by us; see SECURITY.md.
+6b078979a0a0bd185dd3e88c3bced020dea3f02e:backend/auth/config/cloudinary.config.js:generic-api-key:9
+6b078979a0a0bd185dd3e88c3bced020dea3f02e:backend/discounts/config/cloudinary.config.js:generic-api-key:9
+6b078979a0a0bd185dd3e88c3bced020dea3f02e:backend/items/config/cloudinary.config.js:generic-api-key:9

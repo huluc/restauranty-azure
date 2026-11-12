@@ -10,14 +10,31 @@ variables:
   acrName: acrhilalrestauranty
   acrServer: acrhilalrestauranty.azurecr.io
   trivyVersion: '0.76.2'
+  gitleaksVersion: 'v8.30.1'
 
 stages:
+  - stage: SecurityScan
+    displayName: Security scan (secrets)
+    jobs:
+      - job: Gitleaks
+        displayName: Gitleaks secret scan
+        pool:
+          vmImage: ubuntu-24.04
+        steps:
+          - checkout: self
+            fetchDepth: 0
+          - script: |
+              docker run --rm -u "$(id -u):$(id -g)" -v "$(Build.SourcesDirectory):/repo" \
+                zricethezav/gitleaks:$(gitleaksVersion) git /repo --redact --verbose
+            displayName: Scan Git history for secrets
+
   - stage: Build
+    dependsOn: SecurityScan
     jobs:
       - job: BuildScanPush
         displayName: Build, scan, push
         pool:
-          vmImage: ubuntu-latest
+          vmImage: ubuntu-24.04
         strategy:
           matrix:
             auth:      { service: auth,      context: backend/auth }
@@ -50,7 +67,7 @@ stages:
       - deployment: UpdateStagingTag
         displayName: Update staging image tag
         pool:
-          vmImage: ubuntu-latest
+          vmImage: ubuntu-24.04
         environment: staging
         strategy:
           runOnce:
@@ -89,7 +106,7 @@ stages:
       - deployment: UpdateProductionTag
         displayName: Update production image tag
         pool:
-          vmImage: ubuntu-latest
+          vmImage: ubuntu-24.04
         environment: production
         strategy:
           runOnce:
