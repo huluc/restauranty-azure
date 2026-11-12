@@ -1,4 +1,4 @@
 replicaCount: 1
 
 image:
-  tag: "3332031"
+  tag: "ce72c21"
