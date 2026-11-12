@@ -11,10 +11,11 @@ variables:
   acrServer: acrhilalrestauranty.azurecr.io
   trivyVersion: '0.76.2'
   gitleaksVersion: 'v8.30.1'
+  semgrepVersion: '1.185.0'
 
 stages:
   - stage: SecurityScan
-    displayName: Security scan (secrets)
+    displayName: Security scan (secrets, SAST)
     jobs:
       - job: Gitleaks
         displayName: Gitleaks secret scan
@@ -27,6 +28,18 @@ stages:
               docker run --rm -u "$(id -u):$(id -g)" -v "$(Build.SourcesDirectory):/repo" \
                 zricethezav/gitleaks:$(gitleaksVersion) git /repo --redact --verbose
             displayName: Scan Git history for secrets
+
+      - job: Semgrep
+        displayName: Semgrep code scan (SAST)
+        pool:
+          vmImage: ubuntu-24.04
+        steps:
+          - checkout: self
+          - script: |
+              docker run --rm -v "$(Build.SourcesDirectory):/src" semgrep/semgrep:$(semgrepVersion) semgrep scan \
+                --config p/javascript --config p/nodejs --config p/react \
+                --metrics=off --error /src/backend /src/client/src
+            displayName: Scan application code
 
   - stage: Build
     dependsOn: SecurityScan
